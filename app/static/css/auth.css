@@ -1,0 +1,26 @@
+div.main-box{
+    padding-top: 6em;
+    /* display: flex; */
+    /* align-items: center; */
+    /* flex-direction: column; */
+}
+
+div.main-box form{
+    max-width: 600px;
+}
+
+
+
+@media only screen and (max-width: 900px) {
+    div.plots-box{
+        width: 100%;
+    }
+
+    div.main-box{
+        flex-direction: column;
+    
+    }
+    div.main-box div.table-box{
+        width: 100%;
+    }
+  }

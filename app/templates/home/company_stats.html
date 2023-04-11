@@ -1,0 +1,55 @@
+{% set active_page = "home" %}
+
+{% extends "base/base.html" %}
+
+
+
+{% block title %} Company Stats {% endblock %}
+
+{% block otherstyle %}
+
+<link rel="stylesheet" href='/static/css/companystats.css' />
+
+{% endblock %}
+
+{% block content %}
+ <div class="main-box" id = 'mainbox' 
+ data_labels = {{data_labels | tojson}}
+ data_values = {{data_values | tojson}}>
+
+    <div class="plots-box">
+        <div><canvas id="myChart" style="width:100%;max-width:800px"></canvas></div>
+        <div><canvas id="myChart2" style="width:100%;max-width:800px"></canvas></div>
+    </div>
+
+    <div class="table-box" >
+        <div class="table-head">
+            <div>Unit</div>
+            <div>Total Years by all staffs</div>
+        </div>
+        
+
+        {% for unit in units %}
+        <div class="table-row">
+            <div>{{unit.name | title}}</div>
+            <div>{{unit.total_years}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+ </div>
+ 
+{% endblock %}
+
+{% block otherscripts %}
+<script>
+
+    const data_labels = {{ data_labels | tojson}};
+
+    const data_values = {{ data_values | tojson}};
+ 
+    </script>
+
+<script type="text/JavaScript" src="/static/js/plotting.js"></script>
+
+{% endblock %}

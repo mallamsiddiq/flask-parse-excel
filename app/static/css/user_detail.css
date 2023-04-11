@@ -1,0 +1,53 @@
+div.main-box{
+
+    padding-top: 20px;
+
+}
+
+div.table-box{
+    /* background-color: grey; */
+    font-weight: 600;
+    width: 60vw;
+    float: right;
+    display: flex;
+    flex-direction: column;
+}
+
+div.table-box > div{
+    height: 45px;
+    /* background-color: antiquewhite; */
+    padding: 16px;
+    background-color: rgba(53, 82, 68, 0.434);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    color: rgba(179, 183, 186, 0.374);
+    color: bisque;
+}
+
+div.table-box > div:nth-child(odd) {
+    background: rgba(167, 193, 237, 0.74);
+    color: bisque;
+  }
+
+  div.table-box > div:nth-child(1) {
+    background: rgba(19, 58, 126, 0.634);
+    color: bisque;
+  }
+
+div.table-box > div > div{
+    width: 40%;
+}
+
+div.table-head{
+    display: flex;
+    align-items: center;
+    font-weight: 800;
+}
+
+div.table-row{
+    display: flex;
+    align-items: center;
+}

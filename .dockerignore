@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+env/
+venv/
+.idea/
+myenv/
+dole_migrations/
+alembic__/
+db.sqlite3
+ienv

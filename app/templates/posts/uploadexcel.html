@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+
+{% block title %} Upload excel file {% endblock %}
+
+{% block content %}
+	<div>
+		<div class="table-responsive-sm col-12">
+            {% if data|length > 0 %}
+            <table class="table table-sm table-panel table-desktop">
+                <thead>
+                <tr>
+                    <th scope="col th-sm">#</th>
+                    <th scope="col th-sm">Name</th>
+                    <th scope="col th-sm">Unit</th>
+                    <th scope="col th-sm">Years Active</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for line in data %}
+                    <tr class='clickable-row'>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ line.Name |title }}</td>
+                        <td>{{ line.Unit}}</td>
+						<td>{{ line['Tenure (Years)']}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+		<h1>Upload Excel File (.xlsx)</h1>
+		<form action="{{ url_for('home.upload_excel') }}" method="post" enctype="multipart/form-data">
+			<input type="file" name="file"
+				accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+			<input type="submit" value="Upload">
+		</form>
+	</div>
+
+{% endblock %}

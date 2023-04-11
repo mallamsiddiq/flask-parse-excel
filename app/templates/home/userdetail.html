@@ -1,0 +1,47 @@
+{% set active_page = "home" %}
+
+{% extends "base/base.html" %}
+
+{% block otherstyle %}
+
+<link rel="stylesheet" href='/static/css/user_detail.css' />
+<!-- <script type="text/JavaScript" src="/static/js/home.js"></script> -->
+
+{% endblock %}
+
+{% block title %} {{user.name}} {% endblock %}
+
+{% block content %}
+ <div class="main-box" >
+    <h1>{{user.name |title}}</h1>
+
+    {% if user.units_rel|length > 0 %}
+    <p>
+        <h5>History | Units worked at</h5>
+        <h5>And respective years active</h5>
+        <h5>for their <b>{{user.total_years}}</b> years of service </h5>
+    </p>
+    <div class="table-box" >
+        <div class="table-head" >
+            <div>Unit</div>
+            <div>Years Active</div>
+        </div>
+        
+
+        {% for rel in user.units_rel %}
+        <div class="table-row">
+            <div>{{rel.unit.name | title}}</div>
+            <div>{{rel.years_active}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else%}
+
+        <p>
+            <h5>Has no working history here yet</h5>
+        </p>
+
+    {% endif %}
+ </div>
+ 
+{% endblock %}

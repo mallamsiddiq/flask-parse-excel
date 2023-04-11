@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    # command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "flask run"
+    container_name: dole_test_app
+    volumes:
+      - .:/dole_test_app
+    ports:
+      - "5000:5000"
+    environment:
+      - DEBUG=1
+      - FLASK_APP=application.py
+      - APP_SETTINGS=instance.config.DoleAppConfig
+      - FLASK_DEBUG=1
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5000
