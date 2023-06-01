@@ -25,10 +25,6 @@ login_manager = LoginManager()
 def create_app(config_name):
     application.config.from_object(app_config[config_name])
     application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    application.config['debug'] = True
-
-    application.config['Debug'] = True
-    application.config['DEBUG'] = True
 
     database.init_app(application)
 

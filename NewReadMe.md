@@ -82,7 +82,7 @@ I created some views to handle events based on business' logics, you must be a l
 
 i have created a user account -> 
 
-	--> username : dole user, 
+	--> username : dole user
 
 	--> password : dole
 
@@ -98,11 +98,13 @@ The endpoint `/home/upload-excel` points to a view where you can upload an excel
 
 You can login at the endpoint `/auth/login`, logout at `auth/logout` and also create a new account at `auth/users/create`.
 
+***[NEW] I have created another endpoint where you can delete all records in the tables. `/home/delete`***
+
+***[NEW]Also kindly run the app with internet connection to ensure proper running of the imported CDNs [jquery, bootstrap etc]***
 
 
 
-
-## 	Thought process
+## 	Thoughts' process
 
 
 I notice there's issues of dependency from the exercise folder i received, perhaps due the diverse environments of developers. As a result,

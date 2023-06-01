@@ -41,7 +41,6 @@ class Unit(database.Model):
     name = database.Column(database.String(50), unique = True)
     users = database.relationship('User', secondary='Employments', backref='units')
 
-
     @property
     def total_years(self):
 

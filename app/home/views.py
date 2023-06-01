@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, session,  url_for
 
-from tasks.task import ExcelExecutor
+from tasks.task import ExcelExecutor, DatabaseExecutor
 
 from app import database as db
 
@@ -76,3 +76,17 @@ def upload_excel():
     # return data.to_html()
 
     return render_template('posts/uploadexcel.html',  data = data, titles = ['Units', 'Tenure'])
+
+@home_blueprint.route('/delete', methods = ['GET'])
+@login_required
+def flush_tables():
+
+    dbexec = DatabaseExecutor()
+
+    dbexec.flush_tables_rows()
+
+    # cvexec = ExcelExecutor()
+
+    # cvexec.save_users_from_csv('base_users.csv')
+
+    return "<h1>All rows deleted</h1>"

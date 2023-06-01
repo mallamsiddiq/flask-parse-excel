@@ -9,67 +9,82 @@ import datetime
 from dateutil import parser
  
 
+import pandas as pd
+
+import openpyxl
+
+from app import database as db
+
+from app.models import User, Unit, Employment
+import datetime
+from dateutil import parser
 
 
+class DatabaseExecutor:
 
-def get_or_create(session, model, uniquefield, defaults=None, **kwargs):
+	def __init__(self, session = db.session):
 
+			self.session = db.session
 
-	instance = session.query(model).filter_by(**uniquefield).one_or_none()
+	def get_or_create(self, model, uniquefield, defaults=None, **kwargs):
 
-	if instance:
-		return instance, False
+		instance = self.session.query(model).filter_by(**uniquefield).one_or_none()
 
-	kwargs |= defaults or {}
-	kwargs |= uniquefield
+		if instance:
+			return instance, False
 
-	instance = model(**kwargs)
-
-	try:
-		session.add(instance)
-		session.commit()
-	except Exception as error:
-		print(error) 
-		session.rollback()
-		instance = session.query(model).filter_by(**uniquefield).one()
-		return instance, False
-	else:
-		return instance, True
-
-def create_or_update(session, model, uniquefield, **kwargs):
-
-	instance = session.query(model).filter_by(**uniquefield).one_or_none()
-
-	if not instance:
-
+		kwargs |= defaults or {}
 		kwargs |= uniquefield
 
 		instance = model(**kwargs)
-		session.add(instance)
-		
-	else:
 
-		for key, value in kwargs.items():
+		try:
+			self.session.add(instance)
+			self.session.commit()
+		except Exception as error:
+			print(error) 
+			self.session.rollback()
+			instance = self.session.query(model).filter_by(**uniquefield).one()
+			return instance, False
+		else:
+			return instance, True
 
-			setattr(instance, key, value)
+	def create_or_update(self, model, uniquefield, **kwargs):
 
-	session.commit()
+		instance = self.session.query(model).filter_by(**uniquefield).one_or_none()
 
-def save_users_from_csv(path: str) -> None:
+		if not instance:
 
-	df = pd.read_csv(path)
+			kwargs |= uniquefield
 
-	for _, row in df.iterrows():
+			instance = model(**kwargs)
+			self.session.add(instance)
+			
+		else:
 
-		create_or_update(db.session, User, {'name': row['name']}, salary = row['salary'], 
-			time_created = parser.parse(row['time_created']))
+			for key, value in kwargs.items():
 
+				setattr(instance, key, value)
+
+		self.session.commit()
+
+	def flush_tables_rows(self, meta = db.metadata):
+
+		meta = db.metadata
+
+		for table in reversed(meta.sorted_tables):
+
+			self.session.execute(table.delete())
+
+		self.session.commit()
 
 class ExcelExecutor:
 
-	def __init__(self, filepath:str = None):
+	def __init__(self, filepath:str = None, db_executor = DatabaseExecutor()):
 
 		self.filepath = filepath
+
+		self.db_executor = db_executor
 
 		df = pd.DataFrame()
 
@@ -89,18 +104,10 @@ class ExcelExecutor:
 
 		for _, row in df.iterrows():
 
-			user, created_user = get_or_create(db.session, User, {'name' : row['Name']}, salary = 30)
-			unit, created_unit = get_or_create(db.session, Unit, {'name' : row['Unit']})
+			user, created_user = self.db_executor.get_or_create(User, {'name' : row['Name']}, salary = 30)
+			unit, created_unit = self.db_executor.get_or_create(Unit, {'name' : row['Unit']})
 
-
-			employment = Employment(user_id = user.id,
-									unit_id = unit.id,
-									years_active = row['Tenure (Years)'])
-
-			
-			user.units_rel.append(employment)
-
-			db.session.commit()
+			self.db_executor.create_or_update(Employment, {'user_id' : user.id, 'unit_id' : unit.id}, years_active = row['Tenure (Years)'])
 
 
 	def read_grouped_on_name(self):
@@ -117,8 +124,6 @@ class ExcelExecutor:
 			yield({'name': name, 'obj' : (gf.get_group(name)[['Unit', 'Tenure (Years)']].reset_index(drop=True)).to_html()})
 
 
-
-
 	def load(self, path: str) -> dict:
 
 		self.df = pd.read_excel(path)
@@ -126,6 +131,18 @@ class ExcelExecutor:
 		df = self.df
 
 		return
+
+	def save_users_from_csv(self, path = 'base_users.csv'):
+
+		df = pd.read_csv(path)
+
+		for _, row in df.iterrows():
+
+			print(*row['time_created'].strip().split('/'))
+
+			self.db_executor.create_or_update(User, {'name': row['name']}, salary = row['salary'], 
+				time_created = parser.parse(row['time_created']))
+
 
 
 
@@ -137,4 +154,3 @@ if __name__ == '__main__':
 	BASE_DIR = Path(__file__).resolve().parent.parent
 
 	ex = ExcelExecutor(f'{BASE_DIR}/user_unit_tenure.xlsx')
-	
